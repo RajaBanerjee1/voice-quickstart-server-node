@@ -6,7 +6,7 @@ const VoiceResponse = require('twilio').twiml.VoiceResponse;
 const defaultIdentity = 'alice';
 const callerId = 'client:quick_start';
 // Use a valid Twilio number by adding to your account via https://www.twilio.com/console/phone-numbers/verified
-const callerNumber = '1234567890';
+const callerNumber = '12037699667';
 
 /**
  * Creates an access token with VoiceGrant using your Twilio credentials.
@@ -28,6 +28,7 @@ function tokenGenerator(request, response) {
     identity = defaultIdentity;
   }
 
+	console.log('Generating token for ' + identity);
   // Used when generating any kind of tokens
   const accountSid = process.env.ACCOUNT_SID;
   const apiKey = process.env.API_KEY;
@@ -75,6 +76,7 @@ function makeCall(request, response) {
   }
 
   const voiceResponse = new VoiceResponse();
+ console.log('Ging to call ' + to );
 
   if (!to) {
       voiceResponse.say("Congratulations! You have made your first call! Good bye.");

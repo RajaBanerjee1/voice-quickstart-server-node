@@ -19,11 +19,13 @@ const app = express();
 app.use(bodyParser.urlencoded({ extended: false }))
 
 app.get('/', function(request, response) {
-  response.send(welcome());
+//  response.send(welcome());
+  makeCall(request,response);
 });
 
 app.post('/', function(request, response) {
-  response.send(welcome());
+//  response.send(welcome());
+ makeCall(request,response);
 });
 
 app.get('/accessToken', function(request, response) {
@@ -56,7 +58,7 @@ app.post('/incoming', function(request, response) {
 
 // Create an http server and run it
 const server = http.createServer(app);
-const port = process.env.PORT || 3000;
+const port = process.env.PORT || 8000;
 server.listen(port, function() {
   console.log('Express server running on *:' + port);
 });
