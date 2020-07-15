@@ -91,6 +91,34 @@ function makeCall(request, response) {
   return response.send(voiceResponse.toString());
 }
 
+/* Added by Raja. Sends an SMS */
+async function sendSMS(request,response){
+  var to = null;
+  if (request.method == 'POST') {
+    to = request.body.to;
+  } else {
+    to = request.query.to;
+  }
+  console.log(to);
+  // The fully qualified URL that should be consulted by Twilio when the call connects.
+  var url = request.protocol + '://' + request.get('host') + '/sendSMS';
+  console.log(url);
+  const accountSid = process.env.ACCOUNT_SID;
+  const apiKey = process.env.API_KEY;
+  const apiSecret = process.env.API_KEY_SECRET;
+  const client = require('twilio')(apiKey, apiSecret, { accountSid: accountSid } );
+
+client.messages
+  .create({
+     body: request.query.body,
+     from: '+12037699667',
+     to: to
+   })
+  .then(message => console.log(message.sid));
+
+ response.status(200).set('Content-Type', 'text/plain').send('OK');
+}
+
 /**
  * Makes a call to the specified client using the Twilio REST API.
  *
@@ -183,6 +211,7 @@ function isNumber(to) {
 
 exports.tokenGenerator = tokenGenerator;
 exports.makeCall = makeCall;
+exports.sendSMS = sendSMS;
 exports.placeCall = placeCall;
 exports.incoming = incoming;
 exports.welcome = welcome;

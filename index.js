@@ -10,6 +10,7 @@ const makeCall = methods.makeCall;
 const placeCall = methods.placeCall;
 const incoming = methods.incoming;
 const welcome = methods.welcome;
+const sendSMS = methods.sendSMS;
 var twilio = require('twilio');
 
 // Create Express webapp
@@ -43,7 +44,13 @@ app.get('/makeCall', function(request, response) {
 app.post('/makeCall', function(request, response) {
   makeCall(request, response);
 });
+app.get('/sendSMS', function(request, response) {
+  sendSMS(request, response);
+});
 
+app.post('/sendSMS', function(request, response) {
+  sendSMS(request, response);
+});
 app.get('/placeCall', placeCall);
 
 app.post('/placeCall', placeCall);
