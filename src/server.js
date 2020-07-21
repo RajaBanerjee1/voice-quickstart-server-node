@@ -108,11 +108,19 @@ async function sendSMS(request,response){
   const apiSecret = process.env.API_KEY_SECRET;
   const client = require('twilio')(apiKey, apiSecret, { accountSid: accountSid } );
 
+var name   = to.substring(0, to.lastIndexOf("@"));
+var domain = to.substring(to.lastIndexOf("@") +1);
+
+if (isNaN(name))
+	return;
+else
+	console.log('Sending ' + request.query.body + ' to ' + name );
+
 client.messages
   .create({
      body: request.query.body,
      from: '+12037699667',
-     to: to
+     to: name
    })
   .then(message => console.log(message.sid));
 
