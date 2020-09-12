@@ -1,5 +1,5 @@
 require('dotenv').load();
-let dbModule = require('../../../common/dbModule.js');
+
 const AccessToken = require('twilio').jwt.AccessToken;
 const VoiceGrant = AccessToken.VoiceGrant;
 const VoiceResponse = require('twilio').twiml.VoiceResponse;
@@ -45,23 +45,13 @@ function tokenGenerator(request, response) {
       pushCredentialSid: pushCredSid
     });
 
-dbModule.getUserForDevice(identity)
-	.then((user) =>
-		{
-		  // Create an access token which we will sign and return to the client,
-		  // containing the grant we just created
-		  const token = new AccessToken(accountSid, apiKey, apiSecret);
-		  token.addGrant(voiceGrant);
-		  token.identity = user.ExtNumber.replace("tel:+","")  + '_' + identity;
-		  console.log('Token:' + token.toJwt());
-		  return response.send(token.toJwt());
-		}
-	)
-.catch( error =>
-                {
-                console.log('Error raised trying to get user ' + error);
-                });
-  
+  // Create an access token which we will sign and return to the client,
+  // containing the grant we just created
+  const token = new AccessToken(accountSid, apiKey, apiSecret);
+  token.addGrant(voiceGrant);
+  token.identity = identity;
+  console.log('Token:' + token.toJwt());
+  return response.send(token.toJwt());
 }
 
 /**
@@ -81,12 +71,13 @@ function makeCall(request, response) {
   var to = null;
   if (request.method == 'POST') {
     to = request.body.to;
+   console.log('Ging to call ' + to + ' for request ' + JSON.stringify( request.body ));
   } else {
     to = request.query.to;
+    console.log('Ging to call ' + to + ' for request ' + request.query );
   }
 
   const voiceResponse = new VoiceResponse();
- console.log('Ging to call ' + to );
 
   if (!to) {
       voiceResponse.say("Congratulations! You have made your first call! Good bye.");
@@ -94,7 +85,7 @@ function makeCall(request, response) {
       const dial = voiceResponse.dial({callerId : callerNumber});
       dial.number(to);
   } else {
-      const dial = voiceResponse.dial({callerId : callerId});
+      const dial = voiceResponse.dial({callerId : request.From});
       dial.client(to);
   }
   console.log('Response:' + voiceResponse.toString());
@@ -109,7 +100,7 @@ async function sendSMS(request,response){
   } else {
     to = request.query.to;
   }
-  console.log(to);
+  console.log(request.body);
   // The fully qualified URL that should be consulted by Twilio when the call connects.
   var url = request.protocol + '://' + request.get('host') + '/sendSMS';
   console.log(url);
