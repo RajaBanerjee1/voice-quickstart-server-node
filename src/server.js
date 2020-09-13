@@ -52,7 +52,7 @@ dbModule.getUserForDevice(identity)
 		  // containing the grant we just created
 		  const token = new AccessToken(accountSid, apiKey, apiSecret);
 		  token.addGrant(voiceGrant);
-		  token.identity = user.ExtNumber.replace("tel:+","")  + '_' + identity;
+		  token.identity = user.ExtNumber.replace("tel:+","")  + '_A_' + identity;
 		  console.log('Token:' + token.toJwt());
 		  return response.send(token.toJwt());
 		}
@@ -78,23 +78,24 @@ dbModule.getUserForDevice(identity)
  */
 function makeCall(request, response) {
   // The recipient of the call, a phone number or a client
-  var to = null;
+  var to = null,from = null;
   if (request.method == 'POST') {
     to = request.body.to;
+    from =  request.body.From.split('_')[0].replace('client:','');
   } else {
     to = request.query.to;
   }
 
   const voiceResponse = new VoiceResponse();
- console.log('Ging to call ' + to );
+ console.log('Ging to call ' + to +' from ' + from );
 
   if (!to) {
       voiceResponse.say("Congratulations! You have made your first call! Good bye.");
   } else if (isNumber(to)) {
-      const dial = voiceResponse.dial({callerId : callerNumber});
+      const dial = voiceResponse.dial({callerId : from});
       dial.number(to);
   } else {
-      const dial = voiceResponse.dial({callerId : callerId});
+      const dial = voiceResponse.dial({callerId : from});
       dial.client(to);
   }
   console.log('Response:' + voiceResponse.toString());
