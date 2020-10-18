@@ -1,4 +1,4 @@
-require('dotenv').load();
+require('dotenv').config();
 let dbModule = require('../../../common/dbModule.js');
 const AccessToken = require('twilio').jwt.AccessToken;
 const VoiceGrant = AccessToken.VoiceGrant;
@@ -7,6 +7,36 @@ const defaultIdentity = 'alice';
 const callerId = 'client:quick_start';
 // Use a valid Twilio number by adding to your account via https://www.twilio.com/console/phone-numbers/verified
 const callerNumber = '12037699667';
+
+function login(request, response) {
+  // Parse the identity from the http request
+  var identity = null;
+  if (request.method == 'POST') {
+    identity = request.body.identity;
+  }else {
+    identity = request.query.identity;
+  }
+
+  if(!identity) {
+    identity = defaultIdentity;
+  }
+
+	console.log('Getting user for identity ' + identity);
+
+dbModule.getUserForDevice(identity)
+        .then((user) =>
+                {
+                  
+                  var jid = user.ExtNumber.replace("tel:+","")  + '@aurorascienceexploration.com' ;
+                  
+                  return response.send(jid);
+                }
+        )
+.catch( error =>
+                {
+                console.log('Error raised trying to get user for identity' + error);
+                });
+}
 
 /**
  * Creates an access token with VoiceGrant using your Twilio credentials.
@@ -228,6 +258,7 @@ function isNumber(to) {
   return false;
 }
 
+exports.login = login;
 exports.tokenGenerator = tokenGenerator;
 exports.makeCall = makeCall;
 exports.sendSMS = sendSMS;

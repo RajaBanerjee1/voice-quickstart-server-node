@@ -1,10 +1,11 @@
-require('dotenv').load();
+require('dotenv').config();
 
 const http = require('http');
 const path = require('path');
 const express = require('express');
 const bodyParser = require('body-parser')
 const methods = require('./src/server.js');
+const login = methods.login;
 const tokenGenerator = methods.tokenGenerator;
 const makeCall = methods.makeCall;
 const placeCall = methods.placeCall;
@@ -39,6 +40,13 @@ app.post('/accessToken', function(request, response) {
 
 app.get('/makeCall', function(request, response) {
   makeCall(request, response);
+});
+
+app.get('/login', function(request, response) {
+  login(request, response);
+});
+app.post('/login', function(request, response) {
+  login(request, response);
 });
 
 app.post('/makeCall', function(request, response) {
