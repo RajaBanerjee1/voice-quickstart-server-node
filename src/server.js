@@ -140,10 +140,20 @@ async function sendSMS(request,response){
   } else {
     to = request.query.to;
   }
-  console.log(to);
+  var body = null;
+  var identity = defaultIdentity;
+  if (request.method == 'POST') {
+    body = request.body.body;
+    deviceID = request.body.identity;
+  } else {
+    body = request.query.body;
+  }
+ from =  request.body.identity.split('_')[0].replace('client:','');
+
+  console.log(from + ' ' + to + ' '+ body);
   // The fully qualified URL that should be consulted by Twilio when the call connects.
-  var url = request.protocol + '://' + request.get('host') + '/sendSMS';
-  console.log(url);
+  // var url = request.protocol + '://' + request.get('host') + '/sendSMS';
+  // console.log(url);
   const accountSid = process.env.ACCOUNT_SID;
   const apiKey = process.env.API_KEY;
   const apiSecret = process.env.API_KEY_SECRET;
@@ -155,12 +165,12 @@ var domain = to.substring(to.lastIndexOf("@") +1);
 if (isNaN(name))
 	return;
 else
-	console.log('Sending ' + request.query.body + ' to ' + name );
+	console.log('Sending ' + body + ' to ' + name );
 
 client.messages
   .create({
-     body: request.query.body,
-     from: '+12037699667',
+     body: body,
+     from: from ,
      to: name
    })
   .then(message => console.log(message.sid));
