@@ -150,7 +150,7 @@ async function sendSMS(request,response){
   }
  from =  request.body.identity.split('_')[0].replace('client:','');
 
-  console.log(from + ' ' + to + ' '+ body);
+  console.log('From:'+from + ' To:' + to + ' Body:'+ body);
   // The fully qualified URL that should be consulted by Twilio when the call connects.
   // var url = request.protocol + '://' + request.get('host') + '/sendSMS';
   // console.log(url);
@@ -173,9 +173,15 @@ client.messages
      from: from ,
      to: name
    })
-  .then(message => console.log(message.sid));
+  .then(message =>{ console.log(message.sid)
+  
+	  if(message.sid)
+	  {
+		  response.status(200).set('Content-Type', 'text/plain').send('OK');
+	  }
+  });
 
- response.status(200).set('Content-Type', 'text/plain').send('OK');
+ 
 }
 
 /**
