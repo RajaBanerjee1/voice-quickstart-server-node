@@ -22,12 +22,12 @@ app.use(bodyParser.urlencoded({ extended: false }))
 
 app.get('/', function(request, response) {
 //  response.send(welcome());
-  makeCall(request,response);
+//  makeCall(request,response);
 });
 
 app.post('/', function(request, response) {
 //  response.send(welcome());
- makeCall(request,response);
+// makeCall(request,response);
 });
 
 app.get('/accessToken', function(request, response) {
